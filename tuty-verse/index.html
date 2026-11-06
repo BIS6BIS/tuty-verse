@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="description" content="Tuty-Verse: a fan-made birthday game and wishes mailbox.">
+<title>Tuty-Verse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="console" id="console" aria-label="Tuty-Verse handheld console">
+
+  <div class="grip left">
+    <div class="sw"><button class="stick" id="btnHome" aria-label="Home" title="Home"><span class="ic" data-icon="home"></span></button><span class="cap">Home</span></div>
+    <div class="dpad" role="group" aria-label="Move between stages">
+      <button class="u" data-dir="-1" aria-label="Previous stage"></button>
+      <button class="l" data-dir="-1" aria-label="Previous stage"></button>
+      <button class="r" data-dir="1" aria-label="Next stage"></button>
+      <button class="d" data-dir="1" aria-label="Next stage"></button>
+    </div>
+  </div>
+
+  <div class="bezel">
+    <section class="screen" id="screen">
+
+      <header class="hud">
+        <div class="who"><div class="avatar" id="avatar"></div><div class="who-t"><b>Tuty-Verse</b><span id="rank"></span></div></div>
+        <div class="stats">
+          <div class="pill" title="Gems"><i data-icon="gem"></i><span id="gems">0</span></div>
+          <div class="pill" title="Star coins"><i data-icon="coin"></i><span id="coins">0</span></div>
+          <div class="pill prog" title="Memories collected"><i data-icon="heart"></i><span id="progress">0/8</span></div>
+          <button class="icon-btn" id="mailBtn" aria-label="Birthday mailbox" title="Birthday mailbox"><span data-icon="mail"></span></button>
+          <button class="icon-btn" id="buildBtn" aria-label="Build your mascot" title="Build your mascot"><span id="buildIc"></span></button>
+          <button class="icon-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" title="Menu"><span data-icon="menu"></span></button>
+        </div>
+      </header>
+
+      <div class="stage-area">
+        <div class="sky" id="sky" aria-hidden="true"></div>
+        <div class="map-wrap" id="mapWrap">
+          <div class="map" id="map"><svg class="terrain" id="terrain" aria-hidden="true"></svg><div class="token" id="token"></div></div>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="preview-text"><b id="pvTitle"></b><span id="pvSub"></span></div>
+        <button class="cta" id="pvOpen">Open <span class="key">A</span></button>
+      </div>
+
+      <!-- stage card -->
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><article class="card" id="card"></article><div class="lightbox" id="lb" hidden></div></div>
+
+      <!-- menu -->
+      <div class="menu" id="menu" role="dialog" aria-label="Menu" hidden>
+        <h4>Menu</h4>
+        <div class="set-row">Music<div class="seg" id="musicSeg"><button data-m="1">On</button><button data-m="0">Off</button></div></div>
+        <div class="set-row">Sound effects<div class="seg" id="sfxSeg"><button data-s="1">On</button><button data-s="0">Off</button></div></div>
+        <div class="set-row">Volume<input type="range" id="vol" min="10" max="100" step="5" aria-label="Music volume"></div>
+        <div class="set-row">Theme<div class="seg" id="themeSeg"><button data-t="auto">Auto</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div></div>
+        <button class="ghost" id="menuBuild">Build your Tuty mascot</button>
+        <button class="ghost" id="menuCredits">Credits and disclaimer</button>
+        <button class="ghost" id="resetBtn">Reset collected memories</button>
+      </div>
+
+      <!-- mascot builder -->
+      <div class="builder" id="builder" role="dialog" aria-modal="true" aria-label="Build your Tuty mascot">
+        <div class="bd-head"><button class="back" id="bClose" aria-label="Close builder"><span data-icon="x"></span></button><div><b>Build your Tuty mascot</b><span id="bStep"></span></div></div>
+        <div class="bd-main"><div class="bd-stage" id="bStage"></div><div class="bd-panel" id="bPanel"></div></div>
+        <div class="bd-foot" id="bFoot"></div>
+        <div class="confirm" id="bConfirm" hidden><div class="confirm-box" role="alertdialog" aria-labelledby="cfT">
+          <h3 id="cfT">Are you all done?</h3><p>You can still go back and change anything.</p>
+          <div class="row-btns"><button class="btn-soft" id="cfNo">Keep editing</button><button class="cta" id="cfYes">Yes, I'm done</button></div>
+        </div></div>
+      </div>
+
+      <!-- mailbox -->
+      <div class="mail" id="mail" role="dialog" aria-modal="true" aria-label="Tuty's Birthday Mailbox">
+        <div class="phone">
+          <div class="ph-top"><button class="back" id="mailBack" aria-label="Close mailbox">&lsaquo;</button><div class="bd" id="mailAv"></div><div class="ph-t"><b>Tuty's Birthday Mailbox</b><span id="mailCount"></span></div></div>
+          <div class="ph-list" id="mailList"></div>
+          <div class="ph-foot"><button class="send-wide" id="mailSend"><span class="sf-i" data-sf></span>Send your birthday wish</button></div>
+          <div class="compose" id="compose" hidden>
+            <div class="compose-box" role="dialog" aria-labelledby="cpT">
+              <div id="cForm">
+                <h3 id="cpT">Send your birthday wish</h3>
+                <label for="cText">Your message <small>(text only)</small></label>
+                <textarea id="cText" rows="4" maxlength="280" placeholder="Write something kind for Tuty..."></textarea>
+                <div class="c-count"><span id="cCount">0</span>/280</div>
+                <label for="cHandle">Your X username</label>
+                <div class="handle-row"><span class="at">@</span><input id="cHandle" type="text" maxlength="15" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="username"></div>
+                <p class="hint">Type your X username after the <b>@</b>, without spaces. Letters, numbers and underscores only. For example, if you are @tuty_fan, type <b>tuty_fan</b>.</p>
+                <p class="c-err" id="cErr" role="alert"></p>
+                <div class="row-btns"><button class="btn-soft" id="cCancel">Cancel</button><button class="cta" id="cSend">Send wish</button></div>
+              </div>
+              <div id="cDone" hidden>
+                <h3>Thank you!</h3>
+                <p class="c-ok">Your wish is on its way to Tuty's mailbox.</p>
+                <div class="row-btns"><button class="cta" id="cBack">Back to the mailbox</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- wish / credits card -->
+      <div class="gwrap" id="gwrap" role="dialog" aria-modal="true"><div class="gcard" id="gcard"></div></div>
+
+      <!-- start screen -->
+      <div class="start" id="start">
+        <div class="sky" id="startSky" aria-hidden="true"></div>
+        <div id="floaties" aria-hidden="true"></div>
+        <div class="s-hud" aria-hidden="true"><span class="lives"><i></i><i></i><i></i></span><span class="lvl">LEVEL 26</span></div>
+        <div class="start-inner">
+          <div class="hero" id="hero"></div>
+          <span class="eyebrow">A fan-made birthday gift</span>
+          <h1 class="logo" id="ttl" aria-label="Happy Birthday, Tuty!"></h1>
+          <p class="brand">Welcome to Tuty-Verse</p>
+          <p class="ask" id="askLbl">Choose your path</p>
+          <div class="choice" role="group" aria-labelledby="askLbl">
+            <button class="pick pick-a" id="pickMsg"><span class="pk-t"><span class="lbl">Fan Mail</span></span><small>Read wishes and send yours</small></button>
+            <button class="pick pick-b" id="pickGame"><span class="pk-t"><span class="lbl">Play the Game</span></span><small>Follow her journey</small></button>
+          </div>
+          <button class="link-btn" id="pickBuild">Build your own Tuty mascot</button>
+          <p class="credit">Made by @BisBis_06</p>
+        </div>
+        <div class="ground" aria-hidden="true"></div>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <div class="grip right">
+    <div class="sw"><button class="stick" id="btnMenu" aria-label="Menu" title="Menu"><span class="ic" data-icon="menu"></span></button><span class="cap">Menu</span></div>
+    <div class="abxy" role="group" aria-label="Action buttons">
+      <button class="x" id="btnX" title="Previous photo" aria-label="Previous photo">X</button>
+      <button class="y" id="btnY" title="Next photo" aria-label="Next photo">Y</button>
+      <button class="a" id="btnA" title="Open / collect" aria-label="Open or collect">A</button>
+      <button class="b" id="btnB" title="Close" aria-label="Close">B</button>
+    </div>
+  </div>
+</main>
+
+<script src="js/pixel.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/games.js"></script>
+</body>
+</html>
